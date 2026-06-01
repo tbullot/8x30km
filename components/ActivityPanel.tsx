@@ -1,5 +1,7 @@
 "use client";
 
+import summaries from "@/data/summaries.json";
+
 import { useEffect, useState } from "react";
 import { Activity, Edition } from "@/data/editions";
 import { formatTime, formatPace } from "@/lib/utils";
@@ -69,41 +71,15 @@ export default function ActivityPanel({ edition, activity, onClose }: Props) {
       .catch(() => setLoadingPost(false));
   }, [activity.date]);
 
-  // Generate AI summary once we have context
+
+  // Load pre-generated summary from static JSON
   useEffect(() => {
-    if (!post && !activity) return;
-    setLoadingSummary(true);
+    const yearData = summaries[edition.year as keyof typeof summaries] as Record<string, string>;
+    const text = yearData?.[String(activity.day)] || null;
+    setSummary(text);
+    setLoadingSummary(false);
+  }, [activity, edition]);
 
-    const prompt = `You are summarizing a day from a running adventure called 8x30km, where two friends run ~30km/day across 8 consecutive days.
-
-Edition: ${edition.label} (${edition.year})
-Day ${activity.day} of 8 — ${activity.date}
-Distance: ${activity.distance_km} km
-Elevation: ${activity.elevation_m} m
-Moving time: ${formatTime(activity.moving_time_s)}
-Pace: ${formatPace(activity.distance_km, activity.moving_time_s)}
-${post ? `\nBlog post title: ${post.title || "(untitled)"}` : ""}
-${post?.body ? `\nBlog post excerpt: ${post.body.replace(/<[^>]+>/g, "").slice(0, 600)}` : ""}
-
-Write a vivid 2–3 sentence summary of this day's run. Be specific, evocative, and human. Don't repeat the stats verbatim — bring the adventure to life.`;
-
-    fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        const text = data.content?.[0]?.text || null;
-        setSummary(text);
-        setLoadingSummary(false);
-      })
-      .catch(() => setLoadingSummary(false));
-  }, [activity, edition, post]);
 
   return (
     <div className="fixed inset-0 sm:absolute sm:inset-auto sm:top-0 sm:right-0 sm:h-full sm:w-[400px] bg-zinc-900 sm:bg-zinc-900/95 backdrop-blur-sm border-l border-white/10 flex flex-col overflow-hidden z-50">
