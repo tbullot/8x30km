@@ -37,27 +37,28 @@ export default function Home() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-zinc-950">
-      <div className="absolute inset-0">
+      {/* Full-screen map — on desktop, offset right of sidebar */}
+      <div className="absolute inset-0 sm:left-[260px]">
         <Map
           selectedEditionYear={selectedYear}
           selectedDay={selectedDay}
           onSelectActivity={handleSelectActivity}
         />
       </div>
+
       <Sidebar
         selectedYear={selectedYear}
         selectedDay={selectedDay}
         onSelectEdition={handleSelectEdition}
         onSelectDay={handleSelectDay}
       />
+
       {selectedEdition && selectedActivity && (
-        <div className="absolute inset-y-0 right-0 z-20 sm:w-[400px] w-full">
-          <ActivityPanel
-            edition={selectedEdition}
-            activity={selectedActivity}
-            onClose={handleClose}
-          />
-        </div>
+        <ActivityPanel
+          edition={selectedEdition}
+          activity={selectedActivity}
+          onClose={handleClose}
+        />
       )}
     </div>
   );

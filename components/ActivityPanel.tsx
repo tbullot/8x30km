@@ -106,7 +106,7 @@ Write a vivid 2–3 sentence summary of this day's run. Be specific, evocative, 
   }, [activity, edition, post]);
 
   return (
-    <div className="absolute top-0 right-0 h-full w-full sm:w-[400px] bg-zinc-900/95 backdrop-blur-sm border-l border-white/10 flex flex-col overflow-hidden z-10">
+    <div className="fixed inset-0 sm:absolute sm:inset-auto sm:top-0 sm:right-0 sm:h-full sm:w-[400px] bg-zinc-900 sm:bg-zinc-900/95 backdrop-blur-sm border-l border-white/10 flex flex-col overflow-hidden z-50">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10" style={{ borderLeftColor: edition.color, borderLeftWidth: 4 }}>
         <div>
